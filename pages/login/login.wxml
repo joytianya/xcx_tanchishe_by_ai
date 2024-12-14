@@ -2,13 +2,21 @@
   <view class="login-box">
     <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
     <text class="title">贪吃蛇大作战</text>
-    <text class="subtitle">请授权手机号码以继续游戏</text>
+    <text class="subtitle">点击下方按钮授权开始游戏</text>
     
     <button 
       class="auth-btn" 
-      open-type="getPhoneNumber" 
-      bindgetphonenumber="getPhoneNumber">
-      点击授权手机号
+      open-type="chooseAvatar" 
+      bindchooseavatar="onChooseAvatar">
+      获取头像
     </button>
+
+    <input 
+      type="nickname" 
+      class="nickname-input" 
+      placeholder="请输入昵称" 
+      bindinput="onInputNickname"
+      value="{{nickName}}"
+    />
   </view>
 </view> 

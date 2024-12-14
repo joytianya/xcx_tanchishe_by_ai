@@ -50,7 +50,7 @@ page {
   color: #ffffff;
   font-size: 32rpx;
   border-radius: 44rpx;
-  margin-top: 20rpx;
+  margin-bottom: 30rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,4 +58,15 @@ page {
 
 .auth-btn::after {
   border: none;
+}
+
+.nickname-input {
+  width: 80% !important;
+  height: 88rpx;
+  background: #f5f5f5;
+  border-radius: 44rpx;
+  padding: 0 30rpx;
+  font-size: 32rpx;
+  margin-top: 20rpx;
+  text-align: center;
 }
