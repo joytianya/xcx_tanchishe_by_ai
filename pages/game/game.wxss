@@ -1,0 +1,43 @@
+.game-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #0000FF;
+}
+
+.container {
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.game-canvas {
+  width: 100%;
+  height: 70vh;
+  background: #0000FF;
+}
+
+.score-panel {
+  width: 100%;
+  padding: 20rpx;
+  display: flex;
+  justify-content: space-around;
+  color: white;
+}
+
+.control-panel {
+  width: 100%;
+  padding: 20rpx;
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  width: 200rpx;
+}
