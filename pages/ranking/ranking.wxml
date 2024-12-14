@@ -17,8 +17,4 @@
   <view class="empty-tip" wx:if="{{!rankingList.length}}">
     <text class="empty-text">暂无排行数据</text>
   </view>
-
-  <view class="clear-history-container">
-    <text class="clear-history" bindtap="clearHistory">清除历史记录</text>
-  </view>
-</view> 
+</view>

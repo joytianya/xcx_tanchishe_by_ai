@@ -6,7 +6,8 @@ Page({
     score: 0,
     highScore: 0,
     isPlaying: false,
-    gameOver: false
+    gameOver: false,
+    arrowRotation: 0 // 方向箭头的旋转角度
   },
 
   onLoad() {
@@ -23,6 +24,30 @@ Page({
     setTimeout(() => {
       this.initCanvas();
     }, 100);
+    
+    // 获取控制圆的位置和尺寸
+    wx.createSelectorQuery()
+      .select('.control-circle')
+      .boundingClientRect(rect => {
+        this.controlCenter = {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        };
+        this.controlRadius = rect.width / 2;
+      })
+      .exec();
+    
+    // 初始化8个方向的移动增量
+    this.directions = {
+      'right':      { x: 1,  y: 0 },
+      'rightDown':  { x: 1,  y: 1 },
+      'down':       { x: 0,  y: 1 },
+      'leftDown':   { x: -1, y: 1 },
+      'left':       { x: -1, y: 0 },
+      'leftUp':     { x: -1, y: -1 },
+      'up':         { x: 0,  y: -1 },
+      'rightUp':    { x: 1,  y: -1 }
+    };
   },
 
   initCanvas() {
@@ -106,23 +131,21 @@ Page({
   moveSnake() {
     if (this.data.gameOver) return;
 
-    // 根据方向计算新的头部位置
     const head = { ...this.snake[0] };
-    switch (this.direction) {
-      case 'up':    head.y -= GRID_SIZE; break;
-      case 'down':  head.y += GRID_SIZE; break;
-      case 'left':  head.x -= GRID_SIZE; break;
-      case 'right': head.x += GRID_SIZE; break;
-    }
+    const direction = this.directions[this.nextDirection];
+    
+    // 根据方向更新位置
+    head.x += direction.x * GRID_SIZE;
+    head.y += direction.y * GRID_SIZE;
 
-    // 检查是否撞墙
+    // 检查边界碰撞
     if (head.x < 0 || head.x >= this.canvasWidth || 
         head.y < 0 || head.y >= this.canvasHeight) {
       this.endGame();
       return;
     }
 
-    // 检查是否撞到自己
+    // 检查自身碰撞
     for (let i = 0; i < this.snake.length; i++) {
       if (head.x === this.snake[i].x && head.y === this.snake[i].y) {
         this.endGame();
@@ -130,20 +153,17 @@ Page({
       }
     }
 
+    // 移动蛇
+    this.snake.unshift(head);
+
     // 检查是否吃到食物
     if (head.x === this.food.x && head.y === this.food.y) {
-      this.snake.unshift(head);
       this.setData({ score: this.data.score + 1 });
       this.generateFood();
     } else {
-      this.snake.unshift(head);
       this.snake.pop();
     }
 
-    // 更新方向
-    this.direction = this.nextDirection;
-    
-    // 重新绘制
     this.draw();
   },
 
@@ -200,53 +220,91 @@ Page({
   },
 
   handleTouchStart(e) {
-    this.touchStartX = e.touches[0].clientX;
-    this.touchStartY = e.touches[0].clientY;
+    if (!this.data.isPlaying) return;
+    
+    const touch = e.touches[0];
+    this.updateDirection(touch.clientX, touch.clientY);
   },
 
   handleTouchMove(e) {
-    if (!this.touchStartX || !this.touchStartY || !this.data.isPlaying) return;
+    if (!this.data.isPlaying) return;
+    
+    const touch = e.touches[0];
+    this.updateDirection(touch.clientX, touch.clientY);
+  },
 
-    const dx = e.touches[0].clientX - this.touchStartX;
-    const dy = e.touches[0].clientY - this.touchStartY;
-
-    if (Math.abs(dx) > Math.abs(dy)) {
-      if (dx > 0 && this.direction !== 'left') {
-        this.nextDirection = 'right';
-      } else if (dx < 0 && this.direction !== 'right') {
-        this.nextDirection = 'left';
-      }
+  updateDirection(touchX, touchY) {
+    // 计算触摸点相对于圆心的向量
+    const dx = touchX - this.controlCenter.x;
+    const dy = touchY - this.controlCenter.y;
+    
+    // 计算角度（弧度）
+    const angle = Math.atan2(dy, dx);
+    // 转换为角度
+    const degrees = angle * 180 / Math.PI;
+    
+    // 更新箭头旋转
+    this.setData({
+      arrowRotation: degrees + 90
+    });
+    
+    // 将角度转换到0-360范围
+    const normalizedDegrees = ((degrees + 360) % 360);
+    
+    // 根据角度确定8个方向
+    let newDirection;
+    if (normalizedDegrees >= 337.5 || normalizedDegrees < 22.5) {
+      newDirection = 'right';
+    } else if (normalizedDegrees >= 22.5 && normalizedDegrees < 67.5) {
+      newDirection = 'rightDown';
+    } else if (normalizedDegrees >= 67.5 && normalizedDegrees < 112.5) {
+      newDirection = 'down';
+    } else if (normalizedDegrees >= 112.5 && normalizedDegrees < 157.5) {
+      newDirection = 'leftDown';
+    } else if (normalizedDegrees >= 157.5 && normalizedDegrees < 202.5) {
+      newDirection = 'left';
+    } else if (normalizedDegrees >= 202.5 && normalizedDegrees < 247.5) {
+      newDirection = 'leftUp';
+    } else if (normalizedDegrees >= 247.5 && normalizedDegrees < 292.5) {
+      newDirection = 'up';
     } else {
-      if (dy > 0 && this.direction !== 'up') {
-        this.nextDirection = 'down';
-      } else if (dy < 0 && this.direction !== 'down') {
-        this.nextDirection = 'up';
-      }
+      newDirection = 'rightUp';
     }
+    
+    // 更新蛇的方向
+    if (this.isValidDirection(newDirection)) {
+      this.nextDirection = newDirection;
+    }
+  },
 
-    this.touchStartX = e.touches[0].clientX;
-    this.touchStartY = e.touches[0].clientY;
+  isValidDirection(newDirection) {
+    // 对角线移动总是允许
+    if (newDirection.includes('Up') || newDirection.includes('Down')) {
+      return true;
+    }
+    
+    // 防止直线反向移动
+    const opposites = {
+      'right': 'left',
+      'left': 'right',
+      'up': 'down',
+      'down': 'up'
+    };
+    
+    return this.direction !== opposites[newDirection];
   },
 
   handleTouchEnd() {
-    this.touchStartX = null;
-    this.touchStartY = null;
+    // 可以选择是否在松手时保持最后的方向
   },
 
   endGame() {
     clearInterval(this.moveInterval);
-    this.setData({ 
-      gameOver: true,
-      isPlaying: false
-    });
-
-    if (this.data.score > this.data.highScore) {
-      this.setData({ highScore: this.data.score });
-      wx.setStorageSync('highScore', this.data.score);
-    }
-
-    // 更新排行榜
+    
+    // 获取用户信息
     const userInfo = wx.getStorageSync('userInfo');
+    
+    // 创建游戏记录
     const gameRecord = {
       score: this.data.score,
       duration: Math.floor((Date.now() - this.gameStartTime) / 1000),
@@ -257,30 +315,44 @@ Page({
       avatarUrl: userInfo.avatarUrl
     };
 
+    // 获取并更新排行榜
     let rankingList = wx.getStorageSync('rankingList') || [];
     rankingList.push(gameRecord);
     rankingList.sort((a, b) => b.score - a.score);
     rankingList = rankingList.slice(0, 100);
     wx.setStorageSync('rankingList', rankingList);
 
-    wx.showModal({
-      title: '游戏结束',
-      content: `得分：${this.data.score}`,
-      confirmText: '重新开始',
-      cancelText: '查看排行',
-      success: (res) => {
-        if (res.confirm) {
-          this.startGame();
-        } else {
-          wx.switchTab({
-            url: '/pages/ranking/ranking'
-          });
-        }
-      }
+    // 计算当前排名
+    const currentRank = rankingList.findIndex(record => 
+      record.timestamp === gameRecord.timestamp
+    ) + 1;
+
+    // 更新状态
+    this.setData({ 
+      gameOver: true,
+      isPlaying: false,
+      currentRank
     });
+
+    // 更新最高分
+    if (this.data.score > this.data.highScore) {
+      this.setData({ highScore: this.data.score });
+      wx.setStorageSync('highScore', this.data.score);
+    }
+
+    // 保存到历史记录
+    const history = wx.getStorageSync('gameHistory') || [];
+    history.push(gameRecord);
+    wx.setStorageSync('gameHistory', history);
   },
 
   restartGame() {
     this.startGame();
+  },
+
+  goToRanking() {
+    wx.switchTab({
+      url: '/pages/ranking/ranking'
+    });
   }
 });

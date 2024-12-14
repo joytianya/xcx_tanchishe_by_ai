@@ -7,19 +7,72 @@
   <canvas 
     type="2d" 
     id="gameCanvas" 
-    class="game-canvas"
-    bindtouchstart="handleTouchStart"
-    bindtouchmove="handleTouchMove"
-    bindtouchend="handleTouchEnd">
+    class="game-canvas">
   </canvas>
+
+  <!-- 控制区域 -->
+  <view class="control-area">
+    <view class="control-circle" 
+          bindtouchstart="handleTouchStart"
+          bindtouchmove="handleTouchMove"
+          bindtouchend="handleTouchEnd">
+      <!-- 指示当前方向的箭头 -->
+      <view class="direction-arrow" style="transform: rotate({{arrowRotation}}deg)"></view>
+    </view>
+  </view>
+
+  <!-- 游戏结束显示 -->
+  <view class="game-over" wx:if="{{gameOver}}">
+    <view class="game-over-content">
+      <text class="game-over-text">游戏结束</text>
+      <text class="final-score">得分: {{score}}</text>
+      <text class="rank-text">当前排名: 第{{currentRank}}名</text>
+      <view class="button-group">
+        <button class="action-btn restart-btn" bindtap="restartGame">重新开始</button>
+        <button class="action-btn ranking-btn" bindtap="goToRanking">查看排行</button>
+      </view>
+    </view>
+  </view>
 
   <view class="start-btn-container" wx:if="{{!isPlaying && !gameOver}}">
     <button class="start-btn" bindtap="startGame">开始游戏</button>
   </view>
-
-  <view class="game-over" wx:if="{{gameOver}}">
-    <text class="game-over-text">游戏结束</text>
-    <text class="final-score">最终得分: {{score}}</text>
-    <button class="restart-btn" bindtap="restartGame">重新开始</button>
-  </view>
 </view>
+
+.game-over-text, .final-score, .rank-text {
+  display: flex;           /* 使用flex布局 */
+  align-items: center;     /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+  height: 80rpx;          /* 设置固定高度,根据实际需求调整 */
+  width: 100%;            /* 占满容器宽度 */
+  background-color: #f5f5f5; /* 背景色,可以根据需求调整 */
+  border-radius: 10rpx;    /* 圆角效果 */
+  margin: 10rpx 0;        /* 上下间距 */
+}
+
+.game-over-text {
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+.final-score {
+  font-size: 36rpx;
+}
+
+.rank-text {
+  font-size: 32rpx;
+}
+
+/* 按钮组样式优化 */
+.button-group {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.action-btn {
+  height: 80rpx;
+  line-height: 80rpx; /* 让按钮文字垂直居中 */
+  padding: 0 40rpx;
+  border-radius: 10rpx;
+}
