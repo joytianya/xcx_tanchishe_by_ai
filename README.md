@@ -11,23 +11,27 @@
 - 支持游戏重新开始
 - 最高分记录保存
 - 优化的触摸控制，防止误触
-- 纯蓝色背景设计
+- 排行榜功能，展示所有玩家的得分排名
 
 ## 技术特点
 
 - 使用 Canvas 2D 进行游戏渲染
 - 优化的触摸控制算法，提供流畅的游戏体验
-- 使用 localStorage 存储最高分
+- 使用 localStorage 存储最高分和游戏历史
 - 完善的碰撞检测系统
 
 ## 项目结构 
 
-- app.json: 小程序配置文件
-- app.wxss: 小程序全局样式文件
-- pages/game/game.json: 游戏页面配置文件
-- pages/game/game.js: 游戏页面逻辑文件
-- pages/game/game.wxml: 游戏页面结构文件
-- pages/game/game.wxss: 游戏页面样式文件
+- `app.json`: 小程序配置文件
+- `app.wxss`: 小程序全局样式文件
+- `pages/game/game.json`: 游戏页面配置文件
+- `pages/game/game.js`: 游戏页面逻辑文件
+- `pages/game/game.wxml`: 游戏页面结构文件
+- `pages/game/game.wxss`: 游戏页面样式文件
+- `pages/ranking/ranking.json`: 排行榜页面配置文件
+- `pages/ranking/ranking.js`: 排行榜页面逻辑文件
+- `pages/ranking/ranking.wxml`: 排行榜页面结构文件
+- `pages/ranking/ranking.wxss`: 排行榜页面样式文件
 
 ## 代码结构说明
 
@@ -65,6 +69,21 @@
 - 美化分数显示和按钮样式
 - 确保全屏显示和溢出控制
 
+### pages/ranking/
+#### ranking.json
+- 配置排行榜页面的基本设置
+
+#### ranking.js
+- 实现排行榜逻辑
+- 从本地存储获取排名数据并显示
+
+#### ranking.wxml
+- 定义排行榜页面的结构
+- 显示玩家排名和得分
+
+#### ranking.wxss
+- 设置排行榜页面的样式
+
 ## 操作说明
 
 1. 点击"开始游戏"按钮开始
@@ -72,8 +91,11 @@
 3. 引导蛇吃到红色食物得分
 4. 避免撞到墙壁和蛇身
 5. 游戏结束后可以点击"重新开始"
+6. 查看排行榜，了解自己的得分在所有玩家中的排名
 
 ## 安装和运行
 
 1. 克隆项目到本地
+2. 使用微信开发者工具打开项目
+3. 运行并体验游戏
 
