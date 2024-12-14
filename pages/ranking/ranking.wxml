@@ -1,0 +1,24 @@
+<view class="container">
+  <view class="ranking-list">
+    <view class="ranking-item" 
+          wx:for="{{rankingList}}" 
+          wx:key="timestamp"
+          class="{{userInfo.userId === item.userId ? 'my-rank' : ''}}">
+      <view class="rank-number">{{index + 1}}</view>
+      <image class="avatar" src="{{item.avatarUrl}}"></image>
+      <view class="player-info">
+        <text class="nickname">{{item.nickName}}</text>
+        <text class="score">{{item.score}}分</text>
+      </view>
+      <text class="date">{{item.date}}</text>
+    </view>
+  </view>
+
+  <view class="empty-tip" wx:if="{{!rankingList.length}}">
+    <text class="empty-text">暂无排行数据</text>
+  </view>
+
+  <view class="clear-history-container">
+    <text class="clear-history" bindtap="clearHistory">清除历史记录</text>
+  </view>
+</view> 

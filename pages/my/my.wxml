@@ -1,0 +1,20 @@
+<view class="container">
+  <view class="user-info">
+    <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+    <text class="nickname">{{userInfo.nickName}}</text>
+  </view>
+
+  <view class="history-list">
+    <view class="history-item" wx:for="{{gameHistory}}" wx:key="timestamp">
+      <view class="history-info">
+        <text class="score">得分：{{item.score}}</text>
+        <text class="duration">时长：{{item.duration}}秒</text>
+      </view>
+      <text class="date">{{item.date}}</text>
+    </view>
+  </view>
+
+  <view class="clear-history-container">
+    <text class="clear-history" bindtap="clearHistory">清除历史记录</text>
+  </view>
+</view> 

@@ -1,0 +1,18 @@
+<view class="container">
+  <view class="history-list">
+    <view class="history-item" wx:for="{{historyList}}" wx:key="timestamp">
+      <view class="score-info">
+        <text class="score">得分：{{item.score}}</text>
+        <text class="date">{{item.date}}</text>
+      </view>
+      <view class="detail-info">
+        <text class="duration">游戏时长：{{item.duration}}秒</text>
+      </view>
+    </view>
+  </view>
+  
+  <view class="empty-tip" wx:if="{{!historyList.length}}">
+    <image class="empty-icon" src="/assets/empty.png"></image>
+    <text>暂无游戏记录</text>
+  </view>
+</view> 

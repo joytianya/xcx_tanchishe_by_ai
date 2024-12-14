@@ -1,0 +1,75 @@
+.container {
+  padding: 20rpx;
+  min-height: 100vh;
+  background: #f5f5f5;
+  position: relative;
+}
+
+.user-info {
+  background: #ffffff;
+  padding: 40rpx;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  margin-right: 30rpx;
+}
+
+.nickname {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.history-list {
+  margin-bottom: 120rpx; /* 为底部按钮留出空间 */
+}
+
+.history-item {
+  background: #ffffff;
+  padding: 20rpx;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.history-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10rpx;
+}
+
+.score, .duration {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.date {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.clear-history-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx;
+}
+
+.clear-history {
+  background: #07c160;
+  color: #ffffff;
+  font-size: 28rpx;
+  height: 88rpx;  /* 设置固定高度 */
+  width: 100%;
+  display: flex;
+  align-items: center;  /* 垂直居中 */
+  justify-content: center;  /* 水平居中 */
+  border-radius: 8rpx;
+} 

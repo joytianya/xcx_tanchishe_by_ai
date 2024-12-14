@@ -1,16 +1,55 @@
 {
   "pages": [
     "pages/game/game",
-    "pages/index/index",
-    "pages/logs/logs"
+    "pages/login/login",
+    "pages/history/history",
+    "pages/profile/profile",
+    "pages/ranking/ranking"
   ],
   "window": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "贪吃蛇",
     "navigationBarBackgroundColor": "#ffffff"
   },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#07c160",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/game/game",
+        "text": "游戏",
+        "iconPath": "assets/icons/game.png",
+        "selectedIconPath": "assets/icons/game-active.png"
+      },
+      {
+        "pagePath": "pages/ranking/ranking",
+        "text": "排行榜",
+        "iconPath": "assets/icons/ranking.png",
+        "selectedIconPath": "assets/icons/ranking-active.png"
+      },
+      {
+        "pagePath": "pages/history/history",
+        "text": "历史",
+        "iconPath": "assets/icons/history.png",
+        "selectedIconPath": "assets/icons/history-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/icons/profile.png",
+        "selectedIconPath": "assets/icons/profile-active.png"
+      }
+    ]
+  },
   "style": "v2",
   "componentFramework": "glass-easel",
   "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents"
+  "lazyCodeLoading": "requiredComponents",
+  "permission": {
+    "scope.phoneNumber": {
+      "desc": "您的手机号将用于游戏账号登录"
+    }
+  }
 }

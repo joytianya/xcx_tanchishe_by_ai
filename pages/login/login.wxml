@@ -1,0 +1,22 @@
+<view class="container">
+  <view class="login-box">
+    <view class="title">贪吃蛇小游戏</view>
+    
+    <view class="user-info" wx:if="{{isLoggedIn}}">
+      <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
+      <text class="nickname">{{userInfo.nickName}}</text>
+      <text class="phone">{{userInfo.phoneNumber}}</text>
+      <button class="start-btn" bindtap="startGame">开始游戏</button>
+    </view>
+
+    <block wx:else>
+      <view class="auth-tips">点击按钮开始游戏</view>
+      <button 
+        class="login-btn"
+        open-type="getPhoneNumber" 
+        bindgetphonenumber="getPhoneNumber">
+        微信登录
+      </button>
+    </block>
+  </view>
+</view> 

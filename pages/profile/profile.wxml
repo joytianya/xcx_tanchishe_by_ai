@@ -1,0 +1,35 @@
+<view class="container">
+  <view class="user-card">
+    <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+      <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+      <view class="edit-hint">(点击更换头像)</view>
+    </button>
+    
+    <view class="nickname-box" bindtap="editNickname">
+      <text class="nickname">{{userInfo.nickName}}</text>
+      <text class="edit-icon">✎</text>
+    </view>
+    
+    <text class="phone-number">{{userInfo.phoneNumber}}</text>
+  </view>
+
+  <view class="stats-box">
+    <view class="stats-item">
+      <text class="stats-value">{{stats.totalGames || 0}}</text>
+      <text class="stats-label">总游戏次数</text>
+    </view>
+    <view class="stats-item">
+      <text class="stats-value">{{stats.highestScore || 0}}</text>
+      <text class="stats-label">最高分</text>
+    </view>
+    <view class="stats-item">
+      <text class="stats-value">{{stats.totalTime || 0}}</text>
+      <text class="stats-label">总游戏时长(分)</text>
+    </view>
+  </view>
+
+  <view class="action-list">
+    <button class="action-btn" bindtap="clearHistory">清除历史记录</button>
+    <button class="action-btn" bindtap="logout" type="warn">退出登录</button>
+  </view>
+</view> 

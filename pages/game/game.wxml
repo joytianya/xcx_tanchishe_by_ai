@@ -1,13 +1,25 @@
-<view class="container game-container">
-  <canvas type="2d" id="gameCanvas" class="game-canvas" 
-    catchtouchstart="touchStart" 
-    catchtouchmove="touchMove" 
-    catchtouchend="touchEnd"></canvas>
+<view class="container">
   <view class="score-panel">
-    <text>得分: {{score}}</text>
+    <text>分数: {{score}}</text>
     <text>最高分: {{highScore}}</text>
   </view>
-  <view class="control-panel">
-    <button bindtap="startGame" wx:if="{{!isPlaying}}">{{gameOver ? '重新开始' : '开始游戏'}}</button>
+
+  <canvas 
+    type="2d" 
+    id="gameCanvas" 
+    class="game-canvas"
+    bindtouchstart="handleTouchStart"
+    bindtouchmove="handleTouchMove"
+    bindtouchend="handleTouchEnd">
+  </canvas>
+
+  <view class="start-btn-container" wx:if="{{!isPlaying && !gameOver}}">
+    <button class="start-btn" bindtap="startGame">开始游戏</button>
+  </view>
+
+  <view class="game-over" wx:if="{{gameOver}}">
+    <text class="game-over-text">游戏结束</text>
+    <text class="final-score">最终得分: {{score}}</text>
+    <button class="restart-btn" bindtap="restartGame">重新开始</button>
   </view>
 </view>
