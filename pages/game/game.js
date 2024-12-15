@@ -7,7 +7,12 @@ Page({
     highScore: 0,
     isPlaying: false,
     gameOver: false,
-    arrowRotation: 0 // 方向箭头的旋转角度
+    arrowRotation: 0, // 方向箭头的旋转角度
+    isMultiplayer: false, // 是否为多人模式
+    roomId: '', // 房间ID
+    players: [], // 其他玩家信息
+    waitingForPlayers: false, // 是否正在等待其他玩家
+    playerColors: ['#07c160', '#ff4757', '#5352ed', '#ffa502'] // 不同玩家的颜色
   },
 
   onLoad() {
@@ -23,19 +28,8 @@ Page({
     // 延迟初始化canvas，确保页面已经完全加载
     setTimeout(() => {
       this.initCanvas();
+      this.initControl(); // 添加控制区域初始化
     }, 100);
-    
-    // 获取控制圆的位置和尺寸
-    wx.createSelectorQuery()
-      .select('.control-circle')
-      .boundingClientRect(rect => {
-        this.controlCenter = {
-          x: rect.left + rect.width / 2,
-          y: rect.top + rect.height / 2
-        };
-        this.controlRadius = rect.width / 2;
-      })
-      .exec();
     
     // 初始化8个方向的移动增量
     this.directions = {
@@ -48,6 +42,26 @@ Page({
       'up':         { x: 0,  y: -1 },
       'rightUp':    { x: 1,  y: -1 }
     };
+
+    // 初始化WebSocket连接
+    this.initWebSocket();
+  },
+
+  // 初始化控制区域
+  initControl() {
+    wx.createSelectorQuery()
+      .select('.control-circle')
+      .boundingClientRect(rect => {
+        if (rect) {
+          this.controlCenter = {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2
+          };
+          this.controlRadius = rect.width / 2;
+          console.log('Control initialized:', this.controlCenter);
+        }
+      })
+      .exec();
   },
 
   initCanvas() {
@@ -93,10 +107,15 @@ Page({
   },
 
   startGame() {
+    // 设置游戏状态
     this.setData({
       isPlaying: true,
       gameOver: false,
-      score: 0
+      score: 0,
+      isMultiplayer: false,
+      waitingForPlayers: false,
+      roomId: '',
+      players: []
     });
     
     // 初始化蛇的位置
@@ -174,7 +193,7 @@ Page({
     for (let i = this.foods.length - 1; i >= 0; i--) {
       if (head.x === this.foods[i].x && head.y === this.foods[i].y) {
         this.setData({ score: this.data.score + 1 });
-        this.foods.splice(i, 1); // 移除被吃掉的食物
+        this.foods.splice(i, 1); // 移除吃掉的食物
         foodEaten = true;
         // 当食物被吃掉时，生成新的食物
         this.generateFoods(1);
@@ -198,6 +217,8 @@ Page({
   },
 
   draw() {
+    if (!this.ctx) return; // 确保ctx存在
+
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 
@@ -223,18 +244,20 @@ Page({
     });
 
     // 绘制所有食物
-    this.foods.forEach(food => {
-      ctx.fillStyle = '#ff0000';
-      ctx.beginPath();
-      ctx.arc(
-        food.x + GRID_SIZE/2, 
-        food.y + GRID_SIZE/2, 
-        GRID_SIZE/2 - 2, 
-        0, 
-        Math.PI * 2
-      );
-      ctx.fill();
-    });
+    if (this.foods && this.foods.length > 0) {
+      this.foods.forEach(food => {
+        ctx.fillStyle = '#ff0000';
+        ctx.beginPath();
+        ctx.arc(
+          food.x + GRID_SIZE/2, 
+          food.y + GRID_SIZE/2, 
+          GRID_SIZE/2 - 2, 
+          0, 
+          Math.PI * 2
+        );
+        ctx.fill();
+      });
+    }
   },
 
   // 生成指定数量的食物
@@ -268,14 +291,29 @@ Page({
     if (!this.data.isPlaying) return;
     
     const touch = e.touches[0];
-    this.updateDirection(touch.clientX, touch.clientY);
+    // 重新获取控制区域位置
+    wx.createSelectorQuery()
+      .select('.control-circle')
+      .boundingClientRect(rect => {
+        if (rect) {
+          this.controlCenter = {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2
+          };
+          this.controlRadius = rect.width / 2;
+          this.updateDirection(touch.clientX, touch.clientY);
+        }
+      })
+      .exec();
   },
 
   handleTouchMove(e) {
     if (!this.data.isPlaying) return;
     
     const touch = e.touches[0];
-    this.updateDirection(touch.clientX, touch.clientY);
+    if (this.controlCenter) {
+      this.updateDirection(touch.clientX, touch.clientY);
+    }
   },
 
   isValidDirection(newDirection) {
@@ -284,7 +322,9 @@ Page({
   },
 
   updateDirection(touchX, touchY) {
-    // 计算触摸点相对于圆心的向量
+    if (!this.controlCenter) return;
+
+    // 计算触摸点相对于控制中心的向量
     const dx = touchX - this.controlCenter.x;
     const dy = touchY - this.controlCenter.y;
     
@@ -298,7 +338,7 @@ Page({
       arrowRotation: degrees + 90
     });
     
-    // 将角度转换到0-360范围
+    // 将角度转换为0-360范围
     const normalizedDegrees = ((degrees + 360) % 360);
     
     // 根据角度确定8个方向
@@ -380,12 +420,47 @@ Page({
   },
 
   restartGame() {
+    if (this.data.isMultiplayer) {
+      // 如果是多人模式，需要先退出当前房间
+      this.setData({
+        isMultiplayer: false,
+        waitingForPlayers: false,
+        roomId: '',
+        players: []
+      });
+      
+      // 关闭当前WebSocket连接
+      if (this.socket) {
+        this.socket.close();
+      }
+      
+      // 重新初始化WebSocket连接
+      this.initWebSocket();
+    }
+    
+    // 开始新游戏
     this.startGame();
   },
 
   goToRanking() {
     wx.switchTab({
       url: '/pages/ranking/ranking'
+    });
+  },
+
+  createRoom() {
+    wx.showToast({
+      title: '多人游戏即将上线',
+      icon: 'none',
+      duration: 2000
+    });
+  },
+
+  showJoinRoom() {
+    wx.showToast({
+      title: '多人游戏即将上线',
+      icon: 'none',
+      duration: 2000
     });
   }
 });

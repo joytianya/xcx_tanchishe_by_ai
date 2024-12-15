@@ -1,41 +1,68 @@
-<view class="container">
-  <view class="score-panel">
-    <text>分数: {{score}}</text>
-    <text>最高分: {{highScore}}</text>
-  </view>
-
-  <canvas 
-    type="2d" 
-    id="gameCanvas" 
-    class="game-canvas">
-  </canvas>
-
-  <!-- 控制区域 -->
-  <view class="control-area">
-    <view class="control-circle" 
-          bindtouchstart="handleTouchStart"
-          bindtouchmove="handleTouchMove"
-          bindtouchend="handleTouchEnd">
-      <!-- 指示当前方向的箭头 -->
-      <view class="direction-arrow" style="transform: rotate({{arrowRotation}}deg)"></view>
+<view class="game-container">
+  <view class="container">
+    <!-- 分数面板 -->
+    <view class="score-panel">
+      <text>得分: {{score}}</text>
+      <text>最高分: {{highScore}}</text>
     </view>
-  </view>
 
-  <!-- 游戏结束显示 -->
-  <view class="game-over" wx:if="{{gameOver}}">
-    <view class="game-over-content">
-      <text class="game-over-text">游戏结束</text>
-      <text class="final-score">得分: {{score}}</text>
-      <text class="rank-text">当前排名: 第{{currentRank}}名</text>
-      <view class="button-group">
-        <button class="action-btn restart-btn" bindtap="restartGame">重新开始</button>
-        <button class="action-btn ranking-btn" bindtap="goToRanking">查看排行</button>
+    <!-- 游戏画布 -->
+    <canvas type="2d" id="gameCanvas" class="game-canvas"></canvas>
+
+    <!-- 多人游戏等待界面 -->
+    <view class="waiting-panel" wx:if="{{waitingForPlayers}}">
+      <text class="room-id">房间号: {{roomId}}</text>
+      <text class="waiting-text">等待其他玩家加入...</text>
+      <view class="player-list">
+        <view class="player-item" wx:for="{{players}}" wx:key="id">
+          <image class="player-avatar" src="{{item.avatar}}" mode="aspectFill"></image>
+          <text class="player-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 游戏控制区域 -->
+    <view class="control-area" wx:if="{{isPlaying}}">
+      <view class="control-circle" bindtouchstart="handleTouchStart" bindtouchmove="handleTouchMove" bindtouchend="handleTouchEnd">
+        <view class="direction-arrow" style="transform: rotate({{arrowRotation}}deg)"></view>
+      </view>
+    </view>
+
+    <!-- 开始游戏按钮 -->
+    <view class="start-btn-container" wx:if="{{!isPlaying && !gameOver && !waitingForPlayers}}">
+      <button class="start-btn" bindtap="startGame">单人游戏</button>
+      <button class="start-btn multiplayer-btn" bindtap="createRoom">创建房间</button>
+      <button class="start-btn join-btn" bindtap="showJoinRoom">加入房间</button>
+    </view>
+
+    <!-- 游戏结束面板 -->
+    <view class="game-over" wx:if="{{gameOver}}">
+      <view class="game-over-content">
+        <text class="game-over-text">游戏结束</text>
+        <text class="final-score">最终得分: {{score}}</text>
+        <text class="rank-text" wx:if="{{currentRank}}">当前排名: 第{{currentRank}}名</text>
+        <view class="button-group">
+          <button class="action-btn restart-btn" bindtap="restartGame">单人游戏</button>
+          <button class="action-btn ranking-btn" bindtap="goToRanking">查看排行</button>
+        </view>
+        <view class="button-group">
+          <button class="action-btn multiplayer-btn" bindtap="createRoom">创建房间</button>
+          <button class="action-btn join-btn" bindtap="showJoinRoom">加入房间</button>
+        </view>
       </view>
     </view>
   </view>
 
-  <view class="start-btn-container" wx:if="{{!isPlaying && !gameOver}}">
-    <button class="start-btn" bindtap="startGame">开始游戏</button>
+  <!-- 加入房间弹窗 -->
+  <view class="join-room-modal" wx:if="{{showJoinModal}}">
+    <view class="modal-content">
+      <text class="modal-title">加入房间</text>
+      <input class="room-input" type="text" placeholder="请输入房间号" bindinput="onRoomInput" value="{{inputRoomId}}"/>
+      <view class="modal-buttons">
+        <button class="modal-btn cancel" bindtap="hideJoinRoom">取消</button>
+        <button class="modal-btn confirm" bindtap="confirmJoinRoom">确定</button>
+      </view>
+    </view>
   </view>
 </view>
 

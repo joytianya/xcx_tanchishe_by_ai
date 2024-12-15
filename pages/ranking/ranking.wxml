@@ -1,20 +1,57 @@
 <view class="container">
+  <view class="ranking-header">
+    <text class="title">排行榜</text>
+    <text class="subtitle">看看谁是贪吃蛇高手</text>
+  </view>
+
   <view class="ranking-list">
-    <view class="ranking-item" 
-          wx:for="{{rankingList}}" 
-          wx:key="timestamp"
-          class="{{userInfo.userId === item.userId ? 'my-rank' : ''}}">
-      <view class="rank-number">{{index + 1}}</view>
-      <image class="avatar" src="{{item.avatarUrl}}"></image>
-      <view class="player-info">
-        <text class="nickname">{{item.nickName}}</text>
-        <text class="score">{{item.score}}分</text>
+    <!-- Top 3 玩家 -->
+    <view class="top-players">
+      <!-- 第二名 -->
+      <view class="top-player second" wx:if="{{rankingList[1]}}">
+        <view class="crown silver">2</view>
+        <image class="avatar" src="{{rankingList[1].avatarUrl}}"></image>
+        <text class="nickname">{{rankingList[1].nickName}}</text>
+        <text class="score">{{rankingList[1].score}}分</text>
       </view>
-      <text class="date">{{item.date}}</text>
+      
+      <!-- 第一名 -->
+      <view class="top-player first" wx:if="{{rankingList[0]}}">
+        <view class="crown gold">1</view>
+        <image class="avatar" src="{{rankingList[0].avatarUrl}}"></image>
+        <text class="nickname">{{rankingList[0].nickName}}</text>
+        <text class="score">{{rankingList[0].score}}分</text>
+      </view>
+      
+      <!-- 第三名 -->
+      <view class="top-player third" wx:if="{{rankingList[2]}}">
+        <view class="crown bronze">3</view>
+        <image class="avatar" src="{{rankingList[2].avatarUrl}}"></image>
+        <text class="nickname">{{rankingList[2].nickName}}</text>
+        <text class="score">{{rankingList[2].score}}分</text>
+      </view>
+    </view>
+
+    <!-- 其他玩家排名 -->
+    <view class="other-players">
+      <view class="ranking-item {{userInfo.userId === item.userId ? 'my-rank' : ''}}" 
+            wx:for="{{rankingList}}" 
+            wx:key="timestamp"
+            wx:if="{{index > 2}}">
+        <view class="rank-number">{{index + 1}}</view>
+        <image class="avatar" src="{{item.avatarUrl}}"></image>
+        <view class="player-info">
+          <text class="nickname">{{item.nickName}}</text>
+          <text class="score">{{item.score}}分</text>
+        </view>
+        <text class="date">{{item.date}}</text>
+      </view>
     </view>
   </view>
 
   <view class="empty-tip" wx:if="{{!rankingList.length}}">
+    <image class="empty-icon" src="/assets/empty.png"></image>
     <text class="empty-text">暂无排行数据</text>
+    <text class="empty-hint">快来玩一局，创造新纪录吧！</text>
   </view>
 </view>

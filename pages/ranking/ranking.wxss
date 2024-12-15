@@ -1,7 +1,27 @@
 .container {
-  padding: 20rpx;
+  padding: 30rpx;
   min-height: 100vh;
-  background: #f5f5f5;
+  background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+}
+
+.ranking-header {
+  text-align: center;
+  margin-bottom: 40rpx;
+  padding: 20rpx;
+}
+
+.title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 10rpx;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: #666;
+  display: block;
 }
 
 .ranking-list {
@@ -10,18 +30,131 @@
   margin-bottom: 120rpx;
 }
 
+/* Top 3 玩家样式 */
+.top-players {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 60rpx;
+  padding: 20rpx;
+  position: relative;
+}
+
+.top-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.top-player:hover {
+  transform: translateY(-10rpx);
+}
+
+.first {
+  z-index: 3;
+  margin: 0 40rpx;
+}
+
+.second {
+  z-index: 2;
+  margin-top: 60rpx;
+}
+
+.third {
+  z-index: 1;
+  margin-top: 100rpx;
+}
+
+.crown {
+  position: absolute;
+  top: -50rpx;
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 32rpx;
+  color: white;
+  box-shadow: 0 4rpx 10rpx rgba(0,0,0,0.2);
+}
+
+.gold {
+  background: linear-gradient(135deg, #ffd700, #ffa500);
+}
+
+.silver {
+  background: linear-gradient(135deg, #C0C0C0, #A9A9A9);
+}
+
+.bronze {
+  background: linear-gradient(135deg, #CD7F32, #8B4513);
+}
+
+.top-player .avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  border: 6rpx solid white;
+  box-shadow: 0 4rpx 10rpx rgba(0,0,0,0.1);
+}
+
+.first .avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border: 8rpx solid #ffd700;
+}
+
+.top-player .nickname {
+  font-size: 28rpx;
+  color: #333;
+  margin-top: 16rpx;
+  font-weight: bold;
+  max-width: 160rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.top-player .score {
+  font-size: 24rpx;
+  color: #07c160;
+  margin-top: 8rpx;
+}
+
+/* 其他玩家排名样式 */
+.other-players {
+  background: white;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.05);
+}
+
 .ranking-item {
   display: flex;
   align-items: center;
   padding: 20rpx;
   margin-bottom: 20rpx;
   background: #fff;
-  border-radius: 10rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.1);
+  border-radius: 16rpx;
+  transition: all 0.3s ease;
+}
+
+.ranking-item:last-child {
+  margin-bottom: 0;
+}
+
+.ranking-item:hover {
+  transform: translateX(10rpx);
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1);
 }
 
 .my-rank {
-  background: #e8f5e9;
+  background: linear-gradient(to right, rgba(7, 193, 96, 0.1), rgba(7, 193, 96, 0.05));
+  border: 2rpx solid rgba(7, 193, 96, 0.2);
 }
 
 .rank-number {
@@ -29,6 +162,7 @@
   font-size: 32rpx;
   font-weight: bold;
   color: #333;
+  text-align: center;
 }
 
 .avatar {
@@ -36,6 +170,8 @@
   height: 80rpx;
   border-radius: 50%;
   margin-right: 20rpx;
+  border: 4rpx solid white;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
 }
 
 .player-info {
@@ -47,12 +183,12 @@
 .nickname {
   font-size: 28rpx;
   color: #333;
+  margin-bottom: 4rpx;
 }
 
 .score {
   font-size: 24rpx;
   color: #07c160;
-  margin-top: 8rpx;
 }
 
 .date {
@@ -60,20 +196,37 @@
   color: #999;
 }
 
+/* 空状态样式 */
 .empty-tip {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-top: 200rpx;
-  color: #999;
-  font-size: 28rpx;
+  padding: 40rpx;
+  background: white;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.05);
 }
 
 .empty-icon {
-  width: 128rpx;
-  height: 128rpx;
-  margin-bottom: 20rpx;
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 30rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.empty-hint {
+  font-size: 28rpx;
+  color: #666;
+  text-align: center;
 }
 
 .clear-history-container {
