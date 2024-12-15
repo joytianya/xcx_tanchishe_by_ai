@@ -1,22 +1,40 @@
 <view class="container">
   <view class="login-box">
-    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
-    <text class="title">贪吃蛇大作战</text>
-    <text class="subtitle">点击下方按钮授权开始游戏</text>
+    <view class="logo-container">
+      <image class="logo-bg" src="/assets/icons/logo-bg.png" mode="aspectFill"></image>
+      <image class="logo" src="/assets/icons/snake-logo.png" mode="aspectFit"></image>
+    </view>
     
-    <button 
-      class="auth-btn" 
-      open-type="chooseAvatar" 
-      bindchooseavatar="onChooseAvatar">
-      获取头像
-    </button>
+    <view class="welcome-text">
+      <text class="title">贪吃蛇大作战</text>
+      <text class="subtitle">开启你的闯关之旅</text>
+    </view>
 
-    <input 
-      type="nickname" 
-      class="nickname-input" 
-      placeholder="请输入昵称" 
-      bindinput="onInputNickname"
-      value="{{nickName}}"
-    />
+    <view class="avatar-section">
+      <image class="avatar-preview" src="/assets/icons/default-avatar.png" mode="aspectFill"></image>
+    </view>
+
+    <view class="input-section">
+      <view class="input-wrapper">
+        <text class="input-icon">👤</text>
+        <input 
+          type="nickname" 
+          class="nickname-input" 
+          placeholder="请输入你的游戏昵称" 
+          placeholder-class="input-placeholder"
+          bindinput="onInputNickname"
+          value="{{nickName}}"
+        />
+      </view>
+    </view>
+
+    <button class="start-btn" bindtap="startGame">
+      <text class="btn-text">开始游戏</text>
+      <text class="btn-icon">🎮</text>
+    </button>
+  </view>
+
+  <view class="footer">
+    <text class="copyright">© 2024 贪吃蛇大作战</text>
   </view>
 </view> 

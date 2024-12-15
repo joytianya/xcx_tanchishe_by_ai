@@ -2,20 +2,7 @@ const app = getApp()
 
 Page({
   data: {
-    avatarUrl: '',
     nickName: ''
-  },
-
-  onChooseAvatar(e) {
-    const { avatarUrl } = e.detail;
-    this.setData({
-      avatarUrl
-    });
-    
-    // 如果已经有昵称了，就可以直接进入游戏
-    if (this.data.nickName) {
-      this.loginGame();
-    }
   },
 
   onInputNickname(e) {
@@ -23,33 +10,34 @@ Page({
     this.setData({
       nickName
     });
-    
-    // 如果已经有头像了，就可以直接进入游戏
-    if (this.data.avatarUrl) {
-      this.loginGame();
-    }
   },
 
-  loginGame() {
-    if (this.data.avatarUrl && this.data.nickName) {
-      const userInfo = {
-        avatarUrl: this.data.avatarUrl,
-        nickName: this.data.nickName,
-        userId: Date.now().toString()
-      };
-
-      // 保存用户信息
-      wx.setStorageSync('userInfo', userInfo);
-
-      // 跳转到游戏页面
-      wx.switchTab({
-        url: '/pages/game/game'
+  startGame() {
+    if (!this.data.nickName.trim()) {
+      wx.showToast({
+        title: '请输入昵称',
+        icon: 'none'
       });
+      return;
     }
+
+    const userInfo = {
+      avatarUrl: '/assets/icons/default-avatar.png',
+      nickName: this.data.nickName,
+      userId: Date.now().toString()
+    };
+
+    // 保存用户信息
+    wx.setStorageSync('userInfo', userInfo);
+
+    // 跳转到游戏页面
+    wx.switchTab({
+      url: '/pages/game/game'
+    });
   },
 
   onLoad() {
-    // 检查是否已经授权
+    // 检查是否已经登录
     const userInfo = wx.getStorageSync('userInfo');
     if (userInfo) {
       wx.switchTab({
