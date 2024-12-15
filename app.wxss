@@ -39,3 +39,25 @@ button[disabled] {
   background: #ccc !important;
   color: #fff !important;
 }
+
+/* 摇杆圈样式 */
+.joystick {
+  background: rgba(0, 0, 0, 0.7); /* 深色背景 */
+  border-radius: 50%;
+  width: 100rpx; /* 根据需要调整大小 */
+  height: 100rpx; /* 根据需要调整大小 */
+  position: absolute; /* 根据需要调整位置 */
+  /* 其他样式 */
+}
+
+/* 确定方向圆圈样式 */
+.direction-circle {
+  background: rgba(0, 0, 0, 0.7) !important; /* 深色背景 */
+  border-radius: 50%;
+  width: 80rpx; /* 根据需要调整大小 */
+  height: 80rpx; /* 根据需要调整大小 */
+  position: absolute; /* 根据需要调整位置 */
+  bottom: 20rpx; /* 根据需要调整位置 */
+  right: 20rpx; /* 根据需要调整位置 */
+  z-index: 10; /* 确保在其他元素之上 */
+}

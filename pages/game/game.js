@@ -131,8 +131,28 @@ Page({
   moveSnake() {
     if (this.data.gameOver) return;
 
+    // 检查是否是相反方向
+    const opposites = {
+      'right': 'left',
+      'left': 'right',
+      'up': 'down',
+      'down': 'up',
+      'rightUp': 'leftDown',
+      'leftDown': 'rightUp',
+      'rightDown': 'leftUp',
+      'leftUp': 'rightDown'
+    };
+
+    // 如果是相反方向，翻转蛇身
+    if (opposites[this.direction] === this.nextDirection) {
+      this.snake.reverse();
+    }
+
+    // 更新当前方向为下一个方向
+    this.direction = this.nextDirection;
+
     const head = { ...this.snake[0] };
-    const direction = this.directions[this.nextDirection];
+    const direction = this.directions[this.direction];
     
     // 根据方向更新位置
     head.x += direction.x * GRID_SIZE;
@@ -145,14 +165,6 @@ Page({
       return;
     }
 
-    // 检查自身碰撞
-    for (let i = 0; i < this.snake.length; i++) {
-      if (head.x === this.snake[i].x && head.y === this.snake[i].y) {
-        this.endGame();
-        return;
-      }
-    }
-
     // 移动蛇
     this.snake.unshift(head);
 
@@ -162,6 +174,14 @@ Page({
       this.generateFood();
     } else {
       this.snake.pop();
+    }
+
+    // 检查自身碰撞
+    for (let i = 1; i < this.snake.length; i++) {
+      if (head.x === this.snake[i].x && head.y === this.snake[i].y) {
+        this.endGame();
+        return;
+      }
     }
 
     this.draw();
@@ -233,6 +253,11 @@ Page({
     this.updateDirection(touch.clientX, touch.clientY);
   },
 
+  isValidDirection(newDirection) {
+    // 允许所有方向的转向，包括相反方向
+    return true;
+  },
+
   updateDirection(touchX, touchY) {
     // 计算触摸点相对于圆心的向量
     const dx = touchX - this.controlCenter.x;
@@ -275,23 +300,6 @@ Page({
     if (this.isValidDirection(newDirection)) {
       this.nextDirection = newDirection;
     }
-  },
-
-  isValidDirection(newDirection) {
-    // 对角线移动总是允许
-    if (newDirection.includes('Up') || newDirection.includes('Down')) {
-      return true;
-    }
-    
-    // 防止直线反向移动
-    const opposites = {
-      'right': 'left',
-      'left': 'right',
-      'up': 'down',
-      'down': 'up'
-    };
-    
-    return this.direction !== opposites[newDirection];
   },
 
   handleTouchEnd() {
