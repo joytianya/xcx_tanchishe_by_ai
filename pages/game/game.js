@@ -113,8 +113,9 @@ Page({
     this.nextDirection = 'right';
     this.gameStartTime = Date.now();
     
-    // 生成食物
-    this.generateFood();
+    // 初始化食物数组并生成多个食物
+    this.foods = [];
+    this.generateFoods(3); // 初始生成3个食物
     
     // 开始移动
     if (this.moveInterval) {
@@ -169,10 +170,19 @@ Page({
     this.snake.unshift(head);
 
     // 检查是否吃到食物
-    if (head.x === this.food.x && head.y === this.food.y) {
-      this.setData({ score: this.data.score + 1 });
-      this.generateFood();
-    } else {
+    let foodEaten = false;
+    for (let i = this.foods.length - 1; i >= 0; i--) {
+      if (head.x === this.foods[i].x && head.y === this.foods[i].y) {
+        this.setData({ score: this.data.score + 1 });
+        this.foods.splice(i, 1); // 移除被吃掉的食物
+        foodEaten = true;
+        // 当食物被吃掉时，生成新的食物
+        this.generateFoods(1);
+        break;
+      }
+    }
+
+    if (!foodEaten) {
       this.snake.pop();
     }
 
@@ -212,31 +222,46 @@ Page({
       }
     });
 
-    // 绘制食物
-    ctx.fillStyle = '#ff0000';
-    ctx.beginPath();
-    ctx.arc(
-      this.food.x + GRID_SIZE/2, 
-      this.food.y + GRID_SIZE/2, 
-      GRID_SIZE/2 - 2, 
-      0, 
-      Math.PI * 2
-    );
-    ctx.fill();
+    // 绘制所有食物
+    this.foods.forEach(food => {
+      ctx.fillStyle = '#ff0000';
+      ctx.beginPath();
+      ctx.arc(
+        food.x + GRID_SIZE/2, 
+        food.y + GRID_SIZE/2, 
+        GRID_SIZE/2 - 2, 
+        0, 
+        Math.PI * 2
+      );
+      ctx.fill();
+    });
   },
 
-  generateFood() {
+  // 生成指定数量的食物
+  generateFoods(count) {
     const maxX = Math.floor(this.canvasWidth / GRID_SIZE);
     const maxY = Math.floor(this.canvasHeight / GRID_SIZE);
     
-    do {
-      this.food = {
-        x: Math.floor(Math.random() * maxX) * GRID_SIZE,
-        y: Math.floor(Math.random() * maxY) * GRID_SIZE
-      };
-    } while (this.snake.some(segment => 
-      segment.x === this.food.x && segment.y === this.food.y
-    ));
+    for (let i = 0; i < count; i++) {
+      let newFood;
+      do {
+        newFood = {
+          x: Math.floor(Math.random() * maxX) * GRID_SIZE,
+          y: Math.floor(Math.random() * maxY) * GRID_SIZE
+        };
+      } while (
+        // 检查是否与蛇身重叠
+        this.snake.some(segment => 
+          segment.x === newFood.x && segment.y === newFood.y
+        ) ||
+        // 检查是否与其他食物重叠
+        this.foods.some(food =>
+          food.x === newFood.x && food.y === newFood.y
+        )
+      );
+      
+      this.foods.push(newFood);
+    }
   },
 
   handleTouchStart(e) {
